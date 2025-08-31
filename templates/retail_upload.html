@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Revenue Leakage Detection - Telecom Domain</title>
+    <title>AI Revenue Leakage Detection</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -17,13 +17,12 @@
         }
         
         :root {
-            --primary-gradient: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            --secondary-gradient: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
-            --dark-gradient: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-            --telecom-gradient: linear-gradient(135deg, #0066cc 0%, #004499 50%, #17a2b8 100%);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
             --glass-bg: rgba(255, 255, 255, 0.25);
             --glass-border: rgba(255, 255, 255, 0.18);
             --text-primary: #2d3748;
@@ -34,7 +33,7 @@
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0066cc 0%, #17a2b8 30%, #20c997 70%, #28a745 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
@@ -56,33 +55,18 @@
             position: absolute;
             background: white;
             border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
         }
         
-        .signal-wave {
-            position: absolute;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: pulse 4s ease-in-out infinite;
-        }
-        
-        .particle:nth-child(1) { width: 4px; height: 4px; top: 15%; left: 85%; animation-delay: 0s; }
-        .particle:nth-child(2) { width: 6px; height: 6px; top: 70%; left: 15%; animation-delay: 1.5s; }
-        .particle:nth-child(3) { width: 3px; height: 3px; top: 45%; left: 75%; animation-delay: 3s; }
-        .particle:nth-child(4) { width: 5px; height: 5px; top: 25%; left: 25%; animation-delay: 4.5s; }
-        .particle:nth-child(5) { width: 4px; height: 4px; top: 60%; left: 60%; animation-delay: 6s; }
-        
-        .signal-wave:nth-child(6) { width: 80px; height: 80px; top: 30%; left: 70%; animation-delay: 0s; }
-        .signal-wave:nth-child(7) { width: 120px; height: 120px; top: 60%; left: 20%; animation-delay: 2s; }
+        .particle:nth-child(1) { width: 4px; height: 4px; top: 20%; left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; top: 60%; left: 80%; animation-delay: 1s; }
+        .particle:nth-child(3) { width: 3px; height: 3px; top: 40%; left: 60%; animation-delay: 2s; }
+        .particle:nth-child(4) { width: 5px; height: 5px; top: 80%; left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { width: 4px; height: 4px; top: 30%; left: 10%; animation-delay: 4s; }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(180deg); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(1); opacity: 0; }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
         
         .container {
@@ -99,7 +83,7 @@
         }
         
         .header {
-            background: var(--telecom-gradient);
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a5568 100%);
             color: white;
             padding: 40px;
             text-align: center;
@@ -127,13 +111,12 @@
             font-size: 3em;
             margin-bottom: 15px;
             font-weight: 700;
-            background: linear-gradient(135deg, #20c997, #17a2b8, #0066cc);
+            background: linear-gradient(135deg, #f093fb, #f5576c, #4facfe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             position: relative;
             z-index: 1;
-            text-shadow: 0 0 30px rgba(255,255,255,0.3);
         }
         
         .header p {
@@ -177,8 +160,8 @@
         }
         
         .domain-info {
-            background: linear-gradient(135deg, #cff4fc 0%, #b6effb 100%);
-            border: 2px solid #17a2b8;
+            background: linear-gradient(135deg, #d4ffdb 0%, #a8e6cf 100%);
+            border: 2px solid #48bb78;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 35px;
@@ -194,8 +177,8 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(23, 162, 184, 0.1), transparent);
-            animation: rotate 6s linear infinite;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: rotate 4s linear infinite;
         }
         
         @keyframes rotate {
@@ -204,7 +187,7 @@
         }
         
         .domain-info h3 {
-            color: #0c7489;
+            color: #2f855a;
             margin-bottom: 15px;
             font-size: 1.5em;
             font-weight: 600;
@@ -225,7 +208,7 @@
             border-radius: 20px;
             padding: 40px;
             margin-bottom: 35px;
-            border: 3px dashed #17a2b8;
+            border: 3px dashed #cbd5e0;
             text-align: center;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -239,7 +222,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(23, 162, 184, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
             transition: left 0.5s;
         }
         
@@ -248,17 +231,17 @@
         }
         
         .upload-section:hover {
-            border-color: #17a2b8;
-            background: linear-gradient(135deg, #cff4fc 0%, #b6effb 100%);
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e3f2fd 100%);
             transform: translateY(-5px);
             box-shadow: var(--shadow-heavy);
         }
         
         .upload-section.dragover {
-            border-color: #138496;
-            background: linear-gradient(135deg, #b6effb 0%, #9eeaf9 100%);
+            border-color: #667eea;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             transform: scale(1.02) translateY(-5px);
-            box-shadow: 0 25px 50px rgba(23, 162, 184, 0.3);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
         }
         
         .upload-text {
@@ -297,26 +280,26 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 8px 25px rgba(23, 162, 184, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         .file-input-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(23, 162, 184, 0.4);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
         
         .file-input-button::before {
-            content: '📱';
+            content: '📁';
             font-size: 1.2em;
         }
         
         .file-info {
             margin: 20px 0;
             padding: 15px;
-            background: linear-gradient(135deg, #cff4fc 0%, #b6effb 100%);
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             border-radius: 10px;
             display: none;
-            border-left: 4px solid #17a2b8;
+            border-left: 4px solid #28a745;
             position: relative;
             z-index: 1;
         }
@@ -333,14 +316,14 @@
             margin-top: 20px;
             transition: all 0.3s ease;
             display: none;
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
             position: relative;
             z-index: 1;
         }
         
         .process-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
         }
         
         .process-btn:disabled {
@@ -361,7 +344,7 @@
         
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #17a2b8;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -385,7 +368,7 @@
             color: var(--text-primary);
             font-size: 2.2em;
             font-weight: 700;
-            background: var(--telecom-gradient);
+            background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -404,7 +387,7 @@
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid #17a2b8;
+            border-left: 5px solid #667eea;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -417,7 +400,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent, rgba(23, 162, 184, 0.05), transparent);
+            background: linear-gradient(135deg, transparent, rgba(102, 126, 234, 0.05), transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -449,12 +432,12 @@
         }
         
         .anomaly-card {
-            border-left-color: #dc3545;
+            border-left-color: #f56565;
             background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
         }
         
         .anomaly-card h3 {
-            background: linear-gradient(135deg, #dc3545, #c53030);
+            background: linear-gradient(135deg, #f56565, #e53e3e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -517,7 +500,7 @@
         }
         
         .download-report-btn {
-            background: var(--dark-gradient);
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
         }
         
@@ -533,20 +516,20 @@
         
         .view-visualization-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(23, 162, 184, 0.4);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
         
         .csv-download-section {
-            background: linear-gradient(135deg, #cff4fc 0%, #b6effb 100%);
+            background: linear-gradient(135deg, #d4ffdb 0%, #a8e6cf 100%);
             padding: 35px;
             border-radius: 20px;
             text-align: center;
-            border: 2px solid #17a2b8;
+            border: 2px solid #48bb78;
         }
         
         .csv-download-section h3 {
             margin-bottom: 20px;
-            color: #0c7489;
+            color: #2f855a;
             font-size: 1.5em;
             font-weight: 600;
         }
@@ -560,7 +543,7 @@
         }
         
         .download-btn {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
             color: white;
             padding: 15px 25px;
             text-decoration: none;
@@ -570,12 +553,12 @@
             align-items: center;
             gap: 8px;
             font-weight: 600;
-            box-shadow: 0 8px 25px rgba(23, 162, 184, 0.3);
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
         }
         
         .download-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(23, 162, 184, 0.4);
+            box-shadow: 0 15px 35px rgba(66, 153, 225, 0.4);
             text-decoration: none;
             color: white;
         }
@@ -586,7 +569,7 @@
             padding: 20px;
             border-radius: 10px;
             margin: 20px 0;
-            border-left: 5px solid #dc3545;
+            border-left: 5px solid #f56565;
             display: none;
             font-weight: 500;
         }
@@ -664,42 +647,40 @@
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
-        <div class="signal-wave"></div>
-        <div class="signal-wave"></div>
     </div>
 
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-mobile-alt"></i> Telecom Revenue Leakage Detection</h1>
-            <p>🔍 Upload your telecom CSV data to detect revenue leakages and billing anomalies using advanced AI algorithms</p>
+            <h1><i class="fas fa-shopping-cart"></i> Supermarket Revenue Leakage Detection</h1>
+            <p>🤖 Upload your supermarket CSV file to detect revenue leakages and anomalies using advanced AI machine learning algorithms</p>
             <div class="nav-links">
                 <a href="/"><i class="fas fa-home"></i> Back to Domain Selection</a>
-                <a href="/visualize"><i class="fas fa-chart-line"></i> View Analytics Dashboard</a>
+                <a href="/visualize"><i class="fas fa-chart-line"></i> View Latest Analytics</a>
                 <a href="#" onclick="showHelp()"><i class="fas fa-question-circle"></i> Help & Guide</a>
             </div>
         </div>
 
         <div class="main-content">
             <div class="domain-info">
-                <h3><i class="fas fa-signal"></i> Telecom Domain Features</h3>
-                <p><strong>📡 Specialized Detection:</strong> This AI-powered system is specifically optimized for telecommunications data analysis including billing amounts, plan categories, zone coverage areas, payment statuses, and service usage patterns. Upload CSV files with columns like 'Billed_amount', 'Plan_category', 'Zone_area', 'Payment_status', 'Service_type', 'Call_duration', 'Data_usage', etc. Our advanced machine learning algorithms will identify billing irregularities, suspicious usage patterns, and potential revenue leakages in your telecom operations.</p>
+                <h3><i class="fas fa-store"></i> Supermarket Domain Features</h3>
+                <p><strong>🎯 Optimized Detection:</strong> This AI-powered system is specifically optimized for supermarket and retail data analysis including invoice numbers, product categories, customer demographics, and sales transactions. Upload CSV files with columns like 'Invoice_Number', 'Product_Category', 'Customer_Type', 'Amount', 'Date', 'Store_Location', etc. Our machine learning algorithms will automatically detect patterns, anomalies, and potential revenue leakages in your data.</p>
             </div>
 
             <div class="upload-section" id="uploadSection">
                 <div class="upload-text">
-                    <i class="fas fa-cloud-upload-alt" style="font-size: 2em; color: #17a2b8; margin-bottom: 15px; display: block;"></i>
-                    📊 Drag and drop your Telecom CSV file here or click to browse
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2em; color: #667eea; margin-bottom: 15px; display: block;"></i>
+                    📊 Drag and drop your CSV file here or click to browse
                     <div style="font-size: 0.9em; color: #718096; margin-top: 10px;">
-                        Supported formats: CSV files up to 50MB | Minimum 100 billing records recommended
+                        Supported formats: CSV files up to 50MB | Minimum 100 records recommended
                     </div>
                 </div>
                 <div class="file-input-wrapper">
                     <input type="file" id="fileInput" class="file-input" accept=".csv">
-                    <div class="file-input-button">Choose Telecom CSV File</div>
+                    <div class="file-input-button">Choose CSV File</div>
                 </div>
                 <div class="file-info" id="fileInfo"></div>
                 <button class="process-btn" id="processBtn">
-                    <i class="fas fa-cogs"></i> 📡 Analyze Telecom Data
+                    <i class="fas fa-magic"></i> 🚀 Analyze with AI
                 </button>
             </div>
 
@@ -707,31 +688,31 @@
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p><strong>📡 AI Processing Telecom Data...</strong></p>
+                <p><strong>🔮 AI Processing in Progress...</strong></p>
                 <p style="font-size: 0.9em; color: #718096; margin-top: 10px;">
-                    Analyzing billing patterns, usage anomalies, and revenue leakages. This may take a few moments.
+                    Our machine learning algorithms are analyzing your data for patterns and anomalies. This may take a few moments.
                 </p>
             </div>
 
             <div class="results" id="results">
-                <h2><i class="fas fa-chart-bar"></i> 📊 Telecom Analysis Results</h2>
+                <h2><i class="fas fa-chart-pie"></i> 📊 AI Analysis Results</h2>
 
                 <div class="summary-cards">
                     <div class="summary-card">
                         <h3 id="totalRecords">0</h3>
-                        <p><i class="fas fa-database"></i> Total Billing Records</p>
+                        <p><i class="fas fa-database"></i> Total Records Processed</p>
                     </div>
                     <div class="summary-card anomaly-card">
                         <h3 id="anomalyCount">0</h3>
-                        <p><i class="fas fa-exclamation-triangle"></i> Billing Anomalies</p>
+                        <p><i class="fas fa-exclamation-triangle"></i> Anomalies Detected</p>
                     </div>
                     <div class="summary-card">
                         <h3 id="noLeakageCount">0</h3>
-                        <p><i class="fas fa-check-circle"></i> Clean Billing Records</p>
+                        <p><i class="fas fa-check-circle"></i> Clean Records</p>
                     </div>
                     <div class="summary-card anomaly-card">
                         <h3 id="anomalyPercentage">0%</h3>
-                        <p><i class="fas fa-percentage"></i> Revenue Risk Rate</p>
+                        <p><i class="fas fa-percentage"></i> Anomaly Detection Rate</p>
                     </div>
                 </div>
 
@@ -746,20 +727,20 @@
 
                 <div class="action-buttons-section">
                     <h3><i class="fas fa-rocket"></i> 🚀 Next Steps & Actions</h3>
-                    <p style="color: #718096; margin-bottom: 20px;">Take action on your telecom AI analysis results</p>
+                    <p style="color: #718096; margin-bottom: 20px;">Take action on your AI analysis results</p>
                     <div class="action-buttons">
                         <button class="action-btn download-report-btn" id="downloadReportBtn">
-                            <i class="fas fa-file-pdf"></i> Download Telecom Report
+                            <i class="fas fa-file-pdf"></i> Download AI Report
                         </button>
                         <button class="action-btn view-visualization-btn" id="viewVisualizationBtn">
-                            <i class="fas fa-chart-area"></i> Telecom Dashboard
+                            <i class="fas fa-chart-bar"></i> Interactive Dashboard
                         </button>
                     </div>
                 </div>
 
                 <div class="csv-download-section">
-                    <h3><i class="fas fa-download"></i> 📥 Download Processed Telecom Data</h3>
-                    <p style="color: #2d3748; margin-bottom: 25px;">Export your analyzed telecom data in different formats for further billing analysis</p>
+                    <h3><i class="fas fa-download"></i> 📥 Download Processed Data</h3>
+                    <p style="color: #2d3748; margin-bottom: 25px;">Export your analyzed data in different formats for further analysis</p>
                     <div class="csv-download-buttons" id="csvDownloadButtons">
                         <!-- CSV download buttons will be populated by JavaScript -->
                     </div>
@@ -796,7 +777,7 @@
 
             if (downloadReportBtn) {
                 downloadReportBtn.addEventListener('click', function() {
-                    alert('📊 Telecom AI Report generation functionality will be implemented here. This will include detailed billing insights, anomaly patterns, and revenue optimization recommendations.');
+                    alert('📊 AI Report generation functionality will be implemented here. This will include detailed insights, recommendations, and executive summary.');
                 });
             }
 
@@ -840,31 +821,31 @@
                     fileInput.files = files;
                     showFileInfo(file);
                 } else {
-                    showError('⚠️ Please upload a CSV file only. Other file formats are not supported for telecom analysis.');
+                    showError('⚠️ Please upload a CSV file only. Other file formats are not supported.');
                 }
             }
         }
 
         function showFileInfo(file) {
             const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-            const recordEstimate = Math.floor(file.size / 120); // Telecom records are typically larger
+            const recordEstimate = Math.floor(file.size / 100); // Rough estimate
             fileInfo.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-file-csv" style="color: #17a2b8; font-size: 1.2em;"></i>
+                        <i class="fas fa-file-csv" style="color: #28a745; font-size: 1.2em;"></i>
                         <strong>${file.name}</strong>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-weight-hanging" style="color: #20c997;"></i>
+                        <i class="fas fa-weight-hanging" style="color: #17a2b8;"></i>
                         <span>Size: ${sizeInMB} MB</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-phone" style="color: #0066cc;"></i>
-                        <span>~${recordEstimate.toLocaleString()} billing records</span>
+                        <i class="fas fa-list-ol" style="color: #6f42c1;"></i>
+                        <span>~${recordEstimate.toLocaleString()} records</span>
                     </div>
                 </div>
-                <div style="margin-top: 10px; font-size: 0.85em; color: #17a2b8;">
-                    <i class="fas fa-check-circle"></i> Telecom file validated and ready for AI processing
+                <div style="margin-top: 10px; font-size: 0.85em; color: #28a745;">
+                    <i class="fas fa-check-circle"></i> File validated and ready for AI processing
                 </div>
             `;
             fileInfo.style.display = 'block';
@@ -875,20 +856,19 @@
         function processFile() {
             const file = fileInput.files[0];
             if (!file) {
-                showError('❌ Please select a telecom CSV file first before processing.');
+                showError('❌ Please select a CSV file first before processing.');
                 return;
             }
 
             // Validate file size
             const maxSize = 50 * 1024 * 1024; // 50MB
             if (file.size > maxSize) {
-                showError('📁 File size too large. Please upload telecom files smaller than 50MB.');
+                showError('📁 File size too large. Please upload files smaller than 50MB.');
                 return;
             }
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('domain', 'telecom'); // Specify domain
 
             // Show loading
             loading.style.display = 'block';
@@ -896,7 +876,7 @@
             processBtn.disabled = true;
             hideError();
 
-            fetch('/upload/telecom', {
+            fetch('/upload', {
                     method: 'POST',
                     body: formData
                 })
@@ -908,7 +888,7 @@
                             return resultsData;
                         });
                     } else {
-                        throw new Error(data.error || 'Telecom upload failed');
+                        throw new Error(data.error || 'Upload failed');
                     }
                 })
                 .then(resultsData => {
@@ -918,7 +898,7 @@
                     if (resultsData.success) {
                         showResults(resultsData);
                     } else {
-                        showError(resultsData.error || 'Failed to retrieve telecom analysis results');
+                        showError(resultsData.error || 'Failed to retrieve results');
                     }
                 })
                 .catch(error => {
@@ -929,10 +909,10 @@
         }
 
         function showResults(data) {
-            console.log('Received telecom data:', data);
+            console.log('Received data:', data);
 
             if (!data || !data.summary) {
-                showError('❌ Invalid telecom data structure received from server. Please try again.');
+                showError('❌ Invalid data structure received from server. Please try again.');
                 return;
             }
 
@@ -954,7 +934,7 @@
                     Plotly.newPlot('leakageChart', leakageData.data, {
                         ...leakageData.layout,
                         title: {
-                            text: '📞 Telecom Revenue Leakage Distribution',
+                            text: '💰 Revenue Leakage Distribution',
                             font: { size: 16, family: 'Poppins, sans-serif' }
                         },
                         plot_bgcolor: 'rgba(0,0,0,0)',
@@ -967,7 +947,7 @@
                     Plotly.newPlot('anomalyChart', anomalyData.data, {
                         ...anomalyData.layout,
                         title: {
-                            text: '🚨 Telecom Billing Anomaly Types',
+                            text: '🚨 Anomaly Types Distribution',
                             font: { size: 16, family: 'Poppins, sans-serif' }
                         },
                         plot_bgcolor: 'rgba(0,0,0,0)',
@@ -975,7 +955,7 @@
                     }, {responsive: true});
                 }
             } catch (error) {
-                console.error('Error creating telecom visualizations:', error);
+                console.error('Error creating visualizations:', error);
                 document.getElementById('leakageChart').innerHTML = '<div style="text-align: center; color: #666; padding: 40px;"><i class="fas fa-exclamation-triangle"></i><br>Chart could not be loaded<br><small>Please refresh and try again</small></div>';
                 document.getElementById('anomalyChart').innerHTML = '<div style="text-align: center; color: #666; padding: 40px;"><i class="fas fa-exclamation-triangle"></i><br>Chart could not be loaded<br><small>Please refresh and try again</small></div>';
             }
@@ -985,13 +965,13 @@
                 const csvDownloadButtons = document.getElementById('csvDownloadButtons');
                 csvDownloadButtons.innerHTML = `
                     <a href="/download/${data.download_links.all_results || ''}" class="download-btn">
-                        <i class="fas fa-database"></i> Complete Telecom Analysis
+                        <i class="fas fa-database"></i> Complete Analysis Results
                     </a>
-                    <a href="/download/${data.download_links.anomalies_only || ''}" class="download-btn" style="background: linear-gradient(135deg, #dc3545 0%, #c53030 100%);">
-                        <i class="fas fa-exclamation-triangle"></i> Billing Anomalies Only
+                    <a href="/download/${data.download_links.anomalies_only || ''}" class="download-btn" style="background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);">
+                        <i class="fas fa-exclamation-triangle"></i> Anomalies Only
                     </a>
-                    <a href="/download/${data.download_links.no_leakage_only || ''}" class="download-btn" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                        <i class="fas fa-check-circle"></i> Clean Billing Records
+                    <a href="/download/${data.download_links.no_leakage_only || ''}" class="download-btn" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                        <i class="fas fa-check-circle"></i> Clean Records
                     </a>
                 `;
             }
@@ -1002,7 +982,7 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+                background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
                 color: white;
                 padding: 15px 20px;
                 border-radius: 10px;
@@ -1010,7 +990,7 @@
                 z-index: 1000;
                 animation: slideInRight 0.5s ease;
             `;
-            notification.innerHTML = '<i class="fas fa-check-circle"></i> Telecom AI Analysis Complete!';
+            notification.innerHTML = '<i class="fas fa-check-circle"></i> AI Analysis Complete!';
             document.body.appendChild(notification);
 
             setTimeout(() => {
@@ -1073,34 +1053,31 @@
                     ">&times;</button>
                     
                     <h2 style="color: #2d3748; margin-bottom: 20px;">
-                        <i class="fas fa-question-circle"></i> Telecom Help & Guide
+                        <i class="fas fa-question-circle"></i> Help & Guide
                     </h2>
                     
                     <div style="line-height: 1.6; color: #4a5568;">
-                        <h3 style="color: #17a2b8; margin: 20px 0 10px 0;">📊 Supported Telecom CSV Format:</h3>
+                        <h3 style="color: #2d3748; margin: 20px 0 10px 0;">📊 Supported CSV Format:</h3>
                         <ul style="margin-left: 20px;">
-                            <li>Billed_amount, Plan_category, Zone_area, Payment_status</li>
-                            <li>Service_type, Call_duration, Data_usage, SMS_count</li>
-                            <li>Customer_ID, Bill_date, Due_date, Connection_type</li>
-                            <li>Roaming_charges, International_charges, Device_model</li>
+                            <li>Invoice_Number, Product_Category, Customer_Type, Amount</li>
+                            <li>Date, Store_Location, Payment_Method, Quantity</li>
+                            <li>Product_ID, Discount_Applied, Tax_Amount</li>
                         </ul>
                         
-                        <h3 style="color: #17a2b8; margin: 20px 0 10px 0;">🤖 AI Detection Features:</h3>
+                        <h3 style="color: #2d3748; margin: 20px 0 10px 0;">🤖 AI Detection Features:</h3>
                         <ul style="margin-left: 20px;">
-                            <li>Unusual billing patterns and overcharges</li>
-                            <li>Suspicious usage spikes or anomalies</li>
-                            <li>Payment irregularities and defaults</li>
-                            <li>Plan mismatches and service errors</li>
-                            <li>Roaming and international call anomalies</li>
+                            <li>Unusual pricing patterns</li>
+                            <li>Suspicious transaction amounts</li>
+                            <li>Abnormal customer behavior</li>
+                            <li>Invoice number irregularities</li>
                         </ul>
                         
-                        <h3 style="color: #17a2b8; margin: 20px 0 10px 0;">💡 Best Practices:</h3>
+                        <h3 style="color: #2d3748; margin: 20px 0 10px 0;">💡 Best Practices:</h3>
                         <ul style="margin-left: 20px;">
-                            <li>Minimum 100 billing records for accurate analysis</li>
-                            <li>Include billing dates for temporal analysis</li>
-                            <li>Ensure customer data privacy compliance</li>
-                            <li>Monthly billing cycle analysis recommended</li>
-                            <li>Review anomalies with billing department</li>
+                            <li>Minimum 100 records for accurate analysis</li>
+                            <li>Include date columns for temporal analysis</li>
+                            <li>Ensure data quality before upload</li>
+                            <li>Regular monthly analysis recommended</li>
                         </ul>
                     </div>
                 </div>

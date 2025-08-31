@@ -23,14 +23,14 @@ os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 results_store = {}
 
 # Load trained models and encoders
-SUPERMARKET_MODEL_PATH = r"model\super_market\saved_models\trained_pipeline.pkl"
-SUPERMARKET_LEAKAGE_ENCODER_PATH = r"model\super_market\saved_models\leakage_encoder.pkl"
-SUPERMARKET_ANOMALY_ENCODER_PATH = r"model\super_market\saved_models\anomaly_encoder.pkl"
+SUPERMARKET_MODEL_PATH = "model/super_market/saved_models/trained_pipeline.pkl"
+SUPERMARKET_LEAKAGE_ENCODER_PATH = "model/super_market/saved_models/leakage_encoder.pkl"
+SUPERMARKET_ANOMALY_ENCODER_PATH = "model/super_market/saved_models/anomaly_encoder.pkl"
 
 # Telecom model paths
-TELECOM_MODEL_PATH = r"model\Telecom\saved_model\telecom_pipeline.pkl"
-TELECOM_LEAKAGE_ENCODER_PATH = r"model\Telecom\saved_model\le_leakage.pkl"
-TELECOM_ANOMALY_ENCODER_PATH = r"model\Telecom\saved_model\le_anomaly.pkl"
+TELECOM_MODEL_PATH = "model/super_market/saved_models/trained_pipeline.pkl"
+TELECOM_LEAKAGE_ENCODER_PATH = "model/super_market/saved_models/leakage_encoder.pkl"
+TELECOM_ANOMALY_ENCODER_PATH = "model/super_market/saved_models/anomaly_encoder.pkl"
 
 # Initialize model variables
 supermarket_pipeline = None
@@ -396,7 +396,7 @@ def index():
 @app.route('/upload/supermarket')
 def supermarket_upload():
     """Supermarket upload page"""
-    return render_template('index.html')
+    return render_template('retail_upload.html')
 
 @app.route('/upload/telecom')
 def telecom_upload():
@@ -786,4 +786,4 @@ def download_file(filename):
         return jsonify({'error': f'File not found: {str(e)}'}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
