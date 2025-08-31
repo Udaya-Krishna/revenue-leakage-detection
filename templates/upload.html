@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV - AI Revenue Leakage Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 60px 40px;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 50px 30px;
+            border: 3px dashed #dee2e6;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-5px);
+        }
+
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .upload-text {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .file-input-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-info {
+            margin: 30px 0;
+            padding: 20px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            display: none;
+            border-left: 4px solid #28a745;
+        }
+
+        .file-info h3 {
+            color: #155724;
+            margin-bottom: 5px;
+        }
+
+        .file-info p {
+            color: #155724;
+            margin: 0;
+        }
+
+        .process-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+            font-weight: 500;
+        }
+
+        .process-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(40, 167, 69, 0.4);
+        }
+
+        .process-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .loading-subtext {
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+            display: none;
+        }
+
+        .supported-formats {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .supported-formats h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .supported-formats ul {
+            color: #666;
+            margin-left: 20px;
+        }
+
+        .supported-formats li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .upload-section {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 AI Revenue Leakage Detection</h1>
+            <p>Upload your CSV file to detect revenue leakages and anomalies</p>
+        </div>
+
+        <div class="main-content">
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your CSV file here</div>
+                <div class="upload-subtext">or click to browse from your computer</div>
+                
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" class="file-input" accept=".csv">
+                    <div class="file-input-button">Choose CSV File</div>
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <h3 id="fileName"></h3>
+                    <p id="fileSize"></p>
+                </div>
+                
+                <button class="process-btn" id="processBtn">🚀 Analyze File</button>
+            </div>
+
+            <div class="error" id="errorMsg"></div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Processing your file...</div>
+                <div class="loading-subtext">Our AI is analyzing your data for revenue leakages</div>
+            </div>
+
+            <div class="supported-formats">
+                <h4>📋 Required CSV Format:</h4>
+                <ul>
+                    <li>Invoice_Number</li>
+                    <li>Actual_Amount, Tax_Amount, Service_Charge, Discount_Amount</li>
+                    <li>Other transaction-related fields</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const processBtn = document.getElementById('processBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const loading = document.getElementById('loading');
+        const errorMsg = document.getElementById('errorMsg');
+
+        // File input handling
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Drag and drop handling
+        uploadSection.addEventListener('dragover', handleDragOver);
+        uploadSection.addEventListener('dragleave', handleDragLeave);
+        uploadSection.addEventListener('drop', handleDrop);
+        uploadSection.addEventListener('click', () => fileInput.click());
+
+        // Process button
+        processBtn.addEventListener('click', processFile);
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                showFileInfo(file);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    fileInput.files = files;
+                    showFileInfo(file);
+                } else {
+                    showError('Please upload a CSV file only.');
+                }
+            }
+        }
+
+        function showFileInfo(file) {
+            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+            fileName.textContent = `📄 ${file.name}`;
+            fileSize.textContent = `Size: ${sizeInMB} MB`;
+            fileInfo.style.display = 'block';
+            processBtn.style.display = 'inline-block';
+            hideError();
+        }
+
+        function processFile() {
+            const file = fileInput.files[0];
+            if (!file) {
+                showError('Please select a CSV file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Show loading
+            loading.style.display = 'block';
+            uploadSection.style.display = 'none';
+            processBtn.disabled = true;
+            hideError();
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Redirect to results page with session ID
+                    window.location.href = `/results/${data.session_id}`;
+                } else {
+                    loading.style.display = 'none';
+                    uploadSection.style.display = 'block';
+                    processBtn.disabled = false;
+                    showError(data.error || 'An error occurred while processing the file.');
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                uploadSection.style.display = 'block';
+                processBtn.disabled = false;
+                showError('Network error: ' + error.message);
+            });
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMsg.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Revenue Leakage Detection - Choose Your Domain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            padding: 60px 40px;
+            text-align: center;
+        }
+        
+        .domain-selection {
+            margin-bottom: 40px;
+        }
+        
+        .domain-selection h2 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .domain-selection p {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        
+        .domain-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .domain-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .domain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .domain-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+        
+        .domain-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .domain-card.supermarket:hover {
+            border-color: #28a745;
+        }
+        
+        .domain-card.supermarket::before {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+        
+        .domain-card.telecom:hover {
+            border-color: #17a2b8;
+        }
+        
+        .domain-card.telecom::before {
+            background: linear-gradient(90deg, #17a2b8, #138496);
+        }
+        
+        .domain-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .domain-card.supermarket .domain-icon {
+            color: #28a745;
+        }
+        
+        .domain-card.telecom .domain-icon {
+            color: #17a2b8;
+        }
+        
+        .domain-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .domain-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .domain-features {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+        
+        .domain-features h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .domain-features ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .domain-features li {
+            color: #666;
+            margin-bottom: 5px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .domain-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .domain-card.telecom .domain-features li::before {
+            color: #17a2b8;
+        }
+        
+        .select-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+        }
+        
+        .domain-card.supermarket .select-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .domain-card.telecom .select-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+        
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer-links {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .footer-links a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 12px 25px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .footer-links a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+            .main-content {
+                padding: 40px 20px;
+            }
+            .domain-cards {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .domain-card {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 AI Revenue Leakage Detection</h1>
+            <p>Choose your business domain to get started with advanced machine learning-powered revenue leakage detection and anomaly analysis</p>
+        </div>
+
+        <div class="main-content">
+            <div class="domain-selection">
+                <h2>Select Your Domain</h2>
+                <p>Choose the business domain that matches your data structure and requirements</p>
+
+                <div class="domain-cards">
+                    <div class="domain-card supermarket" onclick="selectDomain('supermarket')">
+                        <span class="domain-icon">🛒</span>
+                        <div class="domain-title">Supermarket & Retail</div>
+                        <div class="domain-description">
+                            Perfect for retail businesses, supermarkets, and e-commerce platforms with transaction data, product categories, and customer information.
+                        </div>
+                        <div class="domain-features">
+                            <h4>Key Features:</h4>
+                            <ul>
+                                <li>Invoice number analysis</li>
+                                <li>Duplicate transaction detection</li>
+                                <li>Product category insights</li>
+                                <li>Customer behavior patterns</li>
+                                <li>Sales amount validation</li>
+                            </ul>
+                        </div>
+                        <button class="select-btn">Select Supermarket Domain</button>
+                    </div>
+
+                    <div class="domain-card telecom" onclick="selectDomain('telecom')">
+                        <span class="domain-icon">📱</span>
+                        <div class="domain-title">Telecommunications</div>
+                        <div class="domain-description">
+                            Ideal for telecom companies, internet service providers, and mobile operators with billing data, plan categories, and service usage.
+                        </div>
+                        <div class="domain-features">
+                            <h4>Key Features:</h4>
+                            <ul>
+                                <li>Billing amount validation</li>
+                                <li>Plan category analysis</li>
+                                <li>Zone area insights</li>
+                                <li>Payment status tracking</li>
+                                <li>Service usage patterns</li>
+                            </ul>
+                        </div>
+                        <button class="select-btn">Select Telecom Domain</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <a href="/visualize">📊 View Analytics Dashboard</a>
+                <a href="/about">ℹ️ About the System</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectDomain(domain) {
+            // Store the selected domain in sessionStorage
+            sessionStorage.setItem('selectedDomain', domain);
+
+            // Redirect to the appropriate upload page
+            if (domain === 'supermarket') {
+                window.location.href = '/upload/supermarket';
+            } else if (domain === 'telecom') {
+                window.location.href = '/upload/telecom';
+            }
+        }
+
+        // Add click event listeners to the entire cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.domain-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const domain = this.classList.contains('supermarket') ? 'supermarket' : 'telecom';
+                    selectDomain(domain);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+Invoice_number,Customer_id,Service_id,Agent_id,Billing_date,Payment_status,Transaction_type,Mode_of_payment,Plan_name,Plan_category,Plan_charge,Tax_amount,Actual_amount,Billed_amount,Paid_amount,Balance_amount,Plan_start_date,Plan_end_date,Zone_area,Data_bought,Data_used,Billing_cycle
+INV001,CUST001,SVC001,AGT001,01-01-2024,Paid,New Connection,Auto Debit,Youth Special,Prepaid,599,107.82,706.82,706.82,706.82,0,01-01-2024,01-02-2024,Circle-East,10,5.0,31
+INV002,CUST002,SVC002,AGT002,02-01-2024,Paid,Recharge,Cash,Business Basic,Enterprise,4999,899.82,5898.82,5898.82,5898.82,0,02-01-2024,02-02-2024,Circle-North,200,150.0,30
+INV003,CUST003,SVC003,AGT003,03-01-2024,Pending,New Connection,UPI,Smart Connect,Prepaid,699,125.82,824.82,824.82,0,824.82,03-01-2024,03-02-2024,Metro-A,15,8.0,31

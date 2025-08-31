@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Revenue Leakage Detection</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            margin-top: 20px;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .upload-section.dragover {
+            border-color: #667eea;
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-input-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            border: none;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .file-input-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .upload-text {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .file-info {
+            margin: 15px 0;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .process-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .process-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .process-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .summary-card h3 {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .anomaly-card {
+            border-left-color: #dc3545;
+        }
+        
+        .anomaly-card h3 {
+            color: #dc3545;
+        }
+        
+        .visualizations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(23, 162, 184, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+        /* Action Buttons Section */
+        
+        .action-buttons-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .download-report-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+        
+        .download-report-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .view-visualization-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .view-visualization-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+        /* CSV Download Section */
+        
+        .csv-download-section {
+            background: #e8f5e8;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #d4edda;
+        }
+        
+        .csv-download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .visualizations {
+                grid-template-columns: 1fr;
+            }
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Supermarket Revenue Leakage Detection</h1>
+            <p>Upload your supermarket CSV file to detect revenue leakages and anomalies using advanced machine learning</p>
+            <div class="nav-links">
+                <a href="/">🏠 Back to Domain Selection</a>
+                <a href="/visualize">📊 View Latest Upload Analytics</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="domain-info" style="background: #e8f5e8; border: 2px solid #28a745; border-radius: 10px; padding: 20px; margin-bottom: 30px; text-align: center;">
+                <h3 style="color: #28a745; margin-bottom: 10px;">🛒 Supermarket Domain Features</h3>
+                <p style="color: #666; line-height: 1.6;">This domain is optimized for supermarket and retail data including invoice numbers, product categories, customer types, and sales amounts. Upload CSV files with columns like 'Invoice_Number', 'Product_Category', 'Customer_Type', 'Amount',
+                    etc.</p>
+            </div>
+
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-text">
+                    📁 Drag and drop your CSV file here or click to browse
+                </div>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" class="file-input" accept=".csv">
+                    <div class="file-input-button">Choose CSV File</div>
+                </div>
+                <div class="file-info" id="fileInfo"></div>
+                <button class="process-btn" id="processBtn">🚀 Process File</button>
+            </div>
+
+            <div class="error" id="errorMsg"></div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your file... This may take a few moments.</p>
+            </div>
+
+            <div class="results" id="results">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">📊 Analysis Results</h2>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3 id="totalRecords">0</h3>
+                        <p>Total Records</p>
+                    </div>
+                    <div class="summary-card anomaly-card">
+                        <h3 id="anomalyCount">0</h3>
+                        <p>Anomalies Detected</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 id="noLeakageCount">0</h3>
+                        <p>Clean Records</p>
+                    </div>
+                    <div class="summary-card anomaly-card">
+                        <h3 id="anomalyPercentage">0%</h3>
+                        <p>Anomaly Rate</p>
+                    </div>
+                </div>
+
+                <div class="visualizations">
+                    <div class="chart-container">
+                        <div id="leakageChart"></div>
+                    </div>
+                    <div class="chart-container">
+                        <div id="anomalyChart"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Section -->
+                <div class="action-buttons-section">
+                    <h3 style="margin-bottom: 20px; color: #2c3e50; text-align: center;">🚀 Next Steps</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn download-report-btn" id="downloadReportBtn">
+                            📄 Download Report
+                        </button>
+                        <button class="action-btn view-visualization-btn" id="viewVisualizationBtn">
+                            📊 View Your Data Visualization
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CSV Download Section -->
+                <div class="csv-download-section">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50; text-align: center;">📥 Download Processed Data</h3>
+                    <p style="text-align: center; margin-bottom: 20px;">Download the processed data in different formats</p>
+                    <div class="csv-download-buttons" id="csvDownloadButtons">
+                        <!-- CSV download buttons will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const processBtn = document.getElementById('processBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorMsg = document.getElementById('errorMsg');
+        let currentSessionId = null; // Store current session ID
+
+        // File input handling
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop handling
+        uploadSection.addEventListener('dragover', handleDragOver);
+        uploadSection.addEventListener('dragleave', handleDragLeave);
+        uploadSection.addEventListener('drop', handleDrop);
+
+        // Process button
+        processBtn.addEventListener('click', processFile);
+
+        // Action buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadReportBtn = document.getElementById('downloadReportBtn');
+            const viewVisualizationBtn = document.getElementById('viewVisualizationBtn');
+
+            if (downloadReportBtn) {
+                downloadReportBtn.addEventListener('click', function() {
+                    // Download report functionality (currently empty as requested)
+                    alert('Download Report functionality will be implemented here.');
+                });
+            }
+
+            if (viewVisualizationBtn) {
+                viewVisualizationBtn.addEventListener('click', function() {
+                    // Get the current session ID from the results
+                    const currentSessionId = getCurrentSessionId();
+                    if (currentSessionId) {
+                        // Navigate to processed data visualization
+                        window.location.href = `/visualize/processed/${currentSessionId}`;
+                    } else {
+                        // Fallback to general visualization dashboard
+                        window.location.href = '/visualize';
+                    }
+                });
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                showFileInfo(file);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
+                    fileInput.files = files;
+                    showFileInfo(file);
+                } else {
+                    showError('Please upload a CSV file only.');
+                }
+            }
+        }
+
+        function showFileInfo(file) {
+            const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+            fileInfo.innerHTML = `
+                <strong>📄 ${file.name}</strong><br>
+                Size: ${sizeInMB} MB
+            `;
+            fileInfo.style.display = 'block';
+            processBtn.style.display = 'inline-block';
+            hideError();
+        }
+
+        function processFile() {
+            const file = fileInput.files[0];
+            if (!file) {
+                showError('Please select a CSV file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Show loading
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            processBtn.disabled = true;
+            hideError();
+
+            fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.session_id) {
+                        // Get the actual results using the session ID
+                        return fetch(`/api/results/${data.session_id}`).then(response => response.json()).then(resultsData => {
+                            // Add session ID to the results data
+                            resultsData.session_id = data.session_id;
+                            return resultsData;
+                        });
+                    } else {
+                        throw new Error(data.error || 'Upload failed');
+                    }
+                })
+                .then(resultsData => {
+                    loading.style.display = 'none';
+                    processBtn.disabled = false;
+
+                    if (resultsData.success) {
+                        showResults(resultsData);
+                    } else {
+                        showError(resultsData.error || 'Failed to retrieve results');
+                    }
+                })
+                .catch(error => {
+                    loading.style.display = 'none';
+                    processBtn.disabled = false;
+                    showError('Network error: ' + error.message);
+                });
+        }
+
+        function showResults(data) {
+            console.log('Received data:', data); // Debug log
+
+            // Check if data has the expected structure
+            if (!data || !data.summary) {
+                showError('Invalid data structure received from server');
+                return;
+            }
+
+            // Store the session ID for visualization
+            if (data.session_id) {
+                currentSessionId = data.session_id;
+            }
+
+            // Update summary cards with safe access
+            const summary = data.summary;
+            document.getElementById('totalRecords').textContent = summary.total_records || 0;
+            document.getElementById('anomalyCount').textContent = summary.anomaly_count || 0;
+            document.getElementById('noLeakageCount').textContent = summary.no_leakage_count || 0;
+            document.getElementById('anomalyPercentage').textContent = (summary.anomaly_percentage || 0) + '%';
+
+            // Create visualizations with error handling
+            try {
+                if (data.visualizations && data.visualizations.leakage_chart) {
+                    const leakageData = JSON.parse(data.visualizations.leakage_chart);
+                    Plotly.newPlot('leakageChart', leakageData.data, {
+                        ...leakageData.layout,
+                        title: 'Revenue Leakage Distribution'
+                    });
+                }
+
+                if (data.visualizations && data.visualizations.anomaly_chart) {
+                    const anomalyData = JSON.parse(data.visualizations.anomaly_chart);
+                    Plotly.newPlot('anomalyChart', anomalyData.data, {
+                        ...anomalyData.layout,
+                        title: 'Anomaly Types Distribution'
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating visualizations:', error);
+                // Create placeholder charts if visualization fails
+                document.getElementById('leakageChart').innerHTML = '<p style="text-align: center; color: #666;">Chart could not be loaded</p>';
+                document.getElementById('anomalyChart').innerHTML = '<p style="text-align: center; color: #666;">Chart could not be loaded</p>';
+            }
+
+            // Create CSV download buttons
+            if (data.download_links) {
+                const csvDownloadButtons = document.getElementById('csvDownloadButtons');
+                csvDownloadButtons.innerHTML = `
+                    <a href="/download/${data.download_links.all_results || ''}" class="download-btn">
+                        📊 Complete Results
+                    </a>
+                    <a href="/download/${data.download_links.anomalies_only || ''}" class="download-btn">
+                        ⚠️ Anomalies Only
+                    </a>
+                    <a href="/download/${data.download_links.no_leakage_only || ''}" class="download-btn">
+                        ✅ Clean Records
+                    </a>
+                `;
+            }
+
+            results.style.display = 'block';
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMsg.style.display = 'none';
+        }
+
+        function getCurrentSessionId() {
+            return currentSessionId;
+        }
+    </script>
+</body>
+
+</html>
+
+</body>
+
+</html>

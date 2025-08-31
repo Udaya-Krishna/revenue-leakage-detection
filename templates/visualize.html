@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ dataset_name }} - Analytics Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .header-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+        
+        .stat-card {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stat-card.highlight {
+            background: #3b82f6;
+            color: white;
+            border: 1px solid #2563eb;
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .95;
+            }
+        }
+        
+        .chart-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="header-card rounded-lg p-6 mb-4 shadow-sm">
+                <h1 class="text-4xl font-bold text-slate-900 mb-2">{{ dataset_name }}</h1>
+                <p class="text-lg text-slate-600">Anomaly Detection Dashboard</p>
+            </div>
+            <a href="/visualize" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all duration-300 shadow-sm">
+                ← Back to Dataset Selection
+            </a>
+        </header>
+
+        <!-- Statistics Dashboard -->
+        <div id="stats-dashboard" class="mb-8">
+            <!-- Stats cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Chart Grid -->
+        <div id="visualization-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <!-- Charts will be dynamically inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data passed from Flask backend
+        const chartListJSON = '{{ chart_list_json | safe }}';
+        const statsJSON = '{{ stats_json | safe }}';
+        const chartList = JSON.parse(chartListJSON);
+        const stats = JSON.parse(statsJSON);
+
+        // Enhanced color palettes - more subtle and professional
+        const colorPalettes = {
+            primary: [
+                'rgba(71, 85, 105, 0.8)', 'rgba(239, 68, 68, 0.8)', 'rgba(16, 185, 129, 0.8)',
+                'rgba(245, 158, 11, 0.8)', 'rgba(139, 92, 246, 0.8)', 'rgba(236, 72, 153, 0.8)',
+                'rgba(6, 182, 212, 0.8)', 'rgba(34, 197, 94, 0.8)', 'rgba(251, 113, 133, 0.8)',
+                'rgba(168, 85, 247, 0.8)'
+            ],
+            borders: [
+                'rgba(71, 85, 105, 1)', 'rgba(239, 68, 68, 1)', 'rgba(16, 185, 129, 1)',
+                'rgba(245, 158, 11, 1)', 'rgba(139, 92, 246, 1)', 'rgba(236, 72, 153, 1)',
+                'rgba(6, 182, 212, 1)', 'rgba(34, 197, 94, 1)', 'rgba(251, 113, 133, 1)',
+                'rgba(168, 85, 247, 1)'
+            ]
+        };
+
+        /**
+         * Create statistics dashboard
+         */
+        function createStatsDashboard() {
+            const statsContainer = document.getElementById('stats-dashboard');
+
+            const statsGrid = document.createElement('div');
+            statsGrid.className = 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6';
+
+            // Define stat cards based on available data
+            const statCards = [{
+                key: 'total_records',
+                label: 'Total Records',
+                icon: '📊',
+                formatter: (val) => val.toLocaleString()
+            }, {
+                key: 'data_columns',
+                label: 'Data Columns',
+                icon: '📋',
+                formatter: (val) => val
+            }, {
+                key: 'leakage_count',
+                label: 'Anomalies Found',
+                icon: '⚠️',
+                formatter: (val) => val.toLocaleString(),
+                highlight: true
+            }, {
+                key: 'anomaly_count',
+                label: 'Anomalies Found',
+                icon: '🔍',
+                formatter: (val) => val.toLocaleString(),
+                highlight: true
+            }, {
+                key: 'leakage_percentage',
+                label: 'Leakage Rate',
+                icon: '📈',
+                formatter: (val) => `${val}%`,
+                highlight: true
+            }, {
+                key: 'anomaly_percentage',
+                label: 'Anomaly Rate',
+                icon: '📈',
+                formatter: (val) => `${val}%`,
+                highlight: true
+            }, {
+                key: 'total_billed',
+                label: 'Total Billed',
+                icon: '💰',
+                formatter: (val) => `${(val/1000000).toFixed(1)}M`
+            }, {
+                key: 'total_sales',
+                label: 'Total Sales',
+                icon: '💰',
+                formatter: (val) => `${(val/1000000).toFixed(1)}M`
+            }, {
+                key: 'avg_billed',
+                label: 'Avg Billed',
+                icon: '💳',
+                formatter: (val) => `${val.toFixed(0)}`
+            }, {
+                key: 'avg_sales',
+                label: 'Avg Sales',
+                icon: '💳',
+                formatter: (val) => `${val.toFixed(0)}`
+            }];
+
+            statCards.forEach(card => {
+                if (stats[card.key] !== undefined) {
+                    const statCard = document.createElement('div');
+                    statCard.className = `stat-card rounded-lg p-4 text-center shadow-sm ${card.highlight ? 'highlight pulse-animation' : ''}`;
+
+                    statCard.innerHTML = `
+                        <div class="text-2xl mb-2">${card.icon}</div>
+                        <div class="text-2xl font-bold">${card.formatter(stats[card.key])}</div>
+                        <div class="text-sm opacity-75">${card.label}</div>
+                    `;
+
+                    statsGrid.appendChild(statCard);
+                }
+            });
+
+            statsContainer.appendChild(statsGrid);
+        }
+
+        /**
+         * Generic function to create different types of charts
+         */
+        function createChart(canvasId, title, data, chartType = 'bar') {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            let chartConfig = {
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Count',
+                        data: values,
+                        backgroundColor: colorPalettes.primary.slice(0, labels.length),
+                        borderColor: colorPalettes.borders.slice(0, labels.length),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title,
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            },
+                            color: '#1e293b'
+                        },
+                        legend: {
+                            display: ['pie', 'doughnut', 'polarArea'].includes(chartType),
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            };
+
+            // Chart type specific configurations
+            switch (chartType) {
+                case 'line':
+                    chartConfig.type = 'line';
+                    chartConfig.data.datasets[0].fill = true;
+                    chartConfig.data.datasets[0].backgroundColor = 'rgba(71, 85, 105, 0.1)';
+                    chartConfig.data.datasets[0].borderColor = 'rgba(71, 85, 105, 1)';
+                    chartConfig.data.datasets[0].tension = 0.4;
+                    chartConfig.options.scales = {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    };
+                    break;
+
+                case 'horizontalBar':
+                    chartConfig.type = 'bar';
+                    chartConfig.options.indexAxis = 'y';
+                    chartConfig.options.scales = {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    };
+                    break;
+
+                case 'pie':
+                    chartConfig.type = 'pie';
+                    chartConfig.data.datasets[0].borderWidth = 3;
+                    break;
+
+                case 'doughnut':
+                    chartConfig.type = 'doughnut';
+                    chartConfig.data.datasets[0].borderWidth = 3;
+                    chartConfig.options.cutout = '60%';
+                    break;
+
+                case 'polarArea':
+                    chartConfig.type = 'polarArea';
+                    chartConfig.data.datasets[0].borderWidth = 2;
+                    break;
+
+                default: // bar chart
+                    chartConfig.type = 'bar';
+                    chartConfig.options.scales = {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    };
+            }
+
+            new Chart(ctx, chartConfig);
+        }
+
+        // Main logic to run when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create stats dashboard
+            createStatsDashboard();
+
+            const vizGrid = document.getElementById('visualization-grid');
+
+            // Loop through the list of charts and render each one
+            chartList.forEach((chartInfo, index) => {
+                // Check if there is an error message
+                if (chartInfo.error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'lg:col-span-3 p-6 bg-red-100 border border-red-400 text-red-700 rounded-xl text-center shadow-lg';
+                    errorDiv.innerHTML = `
+                        <div class="text-4xl mb-2">⚠️</div>
+                        <div class="font-semibold">${chartInfo.error}</div>
+                    `;
+                    vizGrid.appendChild(errorDiv);
+                    return;
+                }
+
+                const canvasId = `chart-${index}`;
+
+                // Create the HTML structure for the chart container
+                const chartContainerDiv = document.createElement('div');
+                chartContainerDiv.className = 'chart-card rounded-xl p-6 shadow-lg border border-white/20';
+
+                const chartWrapper = document.createElement('div');
+                chartWrapper.className = 'chart-container';
+
+                const canvas = document.createElement('canvas');
+                canvas.id = canvasId;
+
+                chartWrapper.appendChild(canvas);
+                chartContainerDiv.appendChild(chartWrapper);
+                vizGrid.appendChild(chartContainerDiv);
+
+                // Create the chart with the specified type
+                createChart(canvasId, chartInfo.title, chartInfo.data, chartInfo.type);
+            });
+
+            // Add some interactive animations
+            const cards = document.querySelectorAll('.chart-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px) scale(1.02)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

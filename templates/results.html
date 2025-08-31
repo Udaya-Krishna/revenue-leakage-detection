@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AI Revenue Leakage Detection</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .summary-section {
+            margin-bottom: 40px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .summary-card h3 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .summary-card p {
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .anomaly-card {
+            border-left-color: #dc3545;
+        }
+
+        .anomaly-card h3 {
+            color: #dc3545;
+        }
+
+        .success-card {
+            border-left-color: #28a745;
+        }
+
+        .success-card h3 {
+            color: #28a745;
+        }
+
+        .visualizations {
+            margin-bottom: 40px;
+        }
+
+        .viz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .viz-header h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .action-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+            margin-bottom: 30px;
+        }
+
+        .action-section h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .action-section p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .report-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .report-btn:hover {
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .viz-btn {
+            background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+            box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
+        }
+
+        .viz-btn:hover {
+            box-shadow: 0 10px 25px rgba(253, 126, 20, 0.4);
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .download-section h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .download-section p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .download-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .download-btn.primary:hover {
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .download-btn.success:hover {
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .download-btn.danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .download-btn.danger:hover {
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+            flex-direction: column;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+            text-align: center;
+        }
+
+        .error h3 {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+
+            .back-btn {
+                position: static;
+                transform: none;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="back-btn">← Upload New File</a>
+            <h1>📊 Analysis Results</h1>
+            <p>Revenue leakage detection completed successfully</p>
+        </div>
+
+        <div class="main-content">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Loading results...</p>
+            </div>
+
+            <div id="error" class="error" style="display: none;">
+                <h3>Error Loading Results</h3>
+                <p id="errorMessage"></p>
+            </div>
+
+            <div id="results" style="display: none;">
+                <div class="summary-section">
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h3 id="totalRecords">0</h3>
+                            <p>Total Records Processed</p>
+                        </div>
+                        <div class="summary-card anomaly-card">
+                            <h3 id="anomalyCount">0</h3>
+                            <p>Revenue Leakages Detected</p>
+                        </div>
+                        <div class="summary-card success-card">
+                            <h3 id="noLeakageCount">0</h3>
+                            <p>Clean Records</p>
+                        </div>
+                        <div class="summary-card anomaly-card">
+                            <h3 id="anomalyPercentage">0%</h3>
+                            <p>Leakage Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visualizations">
+                    <div class="viz-header">
+                        <h2>📈 Data Visualization</h2>
+                        <p>Interactive charts showing your revenue leakage analysis</p>
+                    </div>
+                    <div class="charts-container">
+                        <div class="chart-container">
+                            <div id="leakageChart"></div>
+                        </div>
+                        <div class="chart-container">
+                            <div id="anomalyChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <h2>📊 Analysis Actions</h2>
+                    <p>View detailed reports and visualizations or download your data</p>
+                    <div class="action-buttons">
+                        <button class="action-btn report-btn" id="viewReportBtn">
+                            📋 View Detailed Report
+                        </button>
+                        <button class="action-btn viz-btn" id="viewFullVizBtn">
+                            📈 View Full Visualization
+                        </button>
+                    </div>
+                </div>
+
+                <div class="download-section">
+                    <h2>📥 Download Results</h2>
+                    <p>Get your processed data in different formats for further analysis</p>
+                    <div class="download-buttons" id="downloadButtons">
+                        <!-- Download buttons will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get session ID from URL
+        const sessionId = window.location.pathname.split('/').pop();
+        
+        // Load results when page loads
+        document.addEventListener('DOMContentLoaded', loadResults);
+
+        function loadResults() {
+            fetch(`/api/results/${sessionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    if (data.success) {
+                        showResults(data);
+                    } else {
+                        showError(data.error || 'Failed to load results');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loading').style.display = 'none';
+                    showError('Network error: ' + error.message);
+                });
+        }
+
+        function showResults(data) {
+            // Update summary cards
+            document.getElementById('totalRecords').textContent = data.summary.total_records;
+            document.getElementById('anomalyCount').textContent = data.summary.anomaly_count;
+            document.getElementById('noLeakageCount').textContent = data.summary.no_leakage_count;
+            document.getElementById('anomalyPercentage').textContent = data.summary.anomaly_percentage + '%';
+
+            // Create visualizations
+            const leakageData = JSON.parse(data.visualizations.leakage_distribution);
+            const anomalyData = JSON.parse(data.visualizations.anomaly_types);
+
+            Plotly.newPlot('leakageChart', leakageData.data, {
+                ...leakageData.layout,
+                title: 'Revenue Leakage Detection Results'
+            });
+
+            Plotly.newPlot('anomalyChart', anomalyData.data, {
+                ...anomalyData.layout,
+                title: 'Types of Anomalies Detected'
+            });
+
+            // Create download buttons
+            const downloadButtons = document.getElementById('downloadButtons');
+            downloadButtons.innerHTML = `
+                <a href="/download/${data.download_links.all_results}" class="download-btn primary">
+                    📊 Complete Analysis Report
+                </a>
+                <a href="/download/${data.download_links.anomalies_only}" class="download-btn danger">
+                    ⚠️ Revenue Leakages Only
+                </a>
+                <a href="/download/${data.download_links.no_leakage_only}" class="download-btn success">
+                    ✅ Clean Records Only
+                </a>
+            `;
+
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').style.display = 'block';
+        }
+
+        // Add event listeners for the new buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('viewReportBtn').addEventListener('click', function() {
+                // Open detailed report in new tab
+                window.open(`/report/${sessionId}`, '_blank');
+            });
+
+            document.getElementById('viewFullVizBtn').addEventListener('click', function() {
+                // Open full visualization in new tab
+                window.open(`/visualization/${sessionId}`, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>
